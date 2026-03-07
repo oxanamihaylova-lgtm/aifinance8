@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Финансовый AI помощник — контроль долгов, подушка безопасности и план стабилизации</title>
+  <meta name="description" content="Внесите доходы, кредиты и регулярные траты — AI посчитает долговую нагрузку, финансовую устойчивость, подушку безопасности и подскажет план действий." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Финансовый AI помощник" />
+  <meta property="og:description" content="Индекс устойчивости, долговая нагрузка, подушка безопасности и план выхода в стабильность." />
+  <meta property="og:type" content="website" />
+
+  <style>
+    :root{
+      --bg:#0B1220;
+      --card:#0F1A2E;
+      --card2:#111F38;
+      --text:#EAF1FF;
+      --muted:#AFC0E8;
+      --line:rgba(255,255,255,.08);
+      --accent:#7C5CFF;
+      --accent2:#4FD1C5;
+      --danger:#FF5C7A;
+      --ok:#59D39B;
+
+      --radius:18px;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --max:1120px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(900px 500px at 85% 10%, rgba(79,209,197,.25), transparent 55%),
+        radial-gradient(800px 600px at 50% 120%, rgba(255,92,122,.15), transparent 55%),
+        var(--bg);
+      line-height:1.45;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 18px}
+
+    /* Top bar */
+    .top{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,.55);
+      border-bottom:1px solid var(--line);
+    }
+    .top .row{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 30px rgba(124,92,255,.35);
+    }
+    .nav{
+      display:flex; gap:14px; flex-wrap:wrap;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .nav a{opacity:.9}
+    .nav a:hover{opacity:1; color:var(--text)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      transition:.2s transform, .2s background, .2s border;
+      font-weight:650;
+      white-space:nowrap;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
+    .btn.primary{
+      border:none;
+      background: linear-gradient(135deg, var(--accent), #9B7BFF);
+      box-shadow: 0 14px 30px rgba(124,92,255,.28);
+    }
+    .btn.primary:hover{background: linear-gradient(135deg, #8D73FF, var(--accent));}
+    .btn.ghost{background:transparent}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--accent2); box-shadow:0 0 0 4px rgba(79,209,197,.15)}
+    .hero{
+      padding:44px 0 26px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:22px;
+      align-items:stretch;
+    }
+    @media (max-width: 920px){
+      .hero-grid{grid-template-columns:1fr; }
+      .nav{display:none}
+    }
+
+    h1{
+      font-size: clamp(30px, 4vw, 46px);
+      line-height:1.12;
+      margin:12px 0 10px;
+      letter-spacing:-.6px;
+    }
+    .lead{
+      color: var(--muted);
+      font-size: 16.5px;
+      margin:0 0 18px;
+      max-width: 60ch;
+    }
+    .hero-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .trust{
+      margin-top:18px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .form-card{padding:18px}
+    .form-title{font-weight:800; margin:4px 0 6px; font-size:16px}
+    .form-sub{color:var(--muted); font-size:13px; margin:0 0 14px}
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width:520px){.grid2{grid-template-columns:1fr}}
+
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+    input, select, textarea{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,26,46,.65);
+      color:var(--text);
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow:0 0 0 5px rgba(124,92,255,.15);
+    }
+    textarea{min-height:86px; resize:vertical}
+
+    .tiny{font-size:12px;color:var(--muted); margin-top:10px}
+    .tiny a{text-decoration:underline; text-underline-offset:3px}
+
+    /* sections */
+    section{padding:26px 0}
+    .section-title{
+      font-size:22px;
+      margin:0 0 12px;
+      letter-spacing:-.2px;
+    }
+    .section-sub{color:var(--muted); margin:0 0 16px}
+    .tiles{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+    @media (max-width: 920px){.tiles{grid-template-columns:1fr}}
+    .tile{padding:16px; border-radius:var(--radius); border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04)}
+    .tile h3{margin:6px 0 6px; font-size:16px}
+    .tile p{margin:0; color:var(--muted); font-size:14px}
+    .icon{
+      width:40px; height:40px; border-radius:14px;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(124,92,255,.12);
+      border:1px solid rgba(124,92,255,.25);
+      margin-bottom:10px;
+      font-size:18px;
+    }
+
+    .how{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    @media (max-width: 920px){.how{grid-template-columns:1fr}}
+    .step{
+      padding:16px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+    }
+    .step .n{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:32px; height:32px; border-radius:12px;
+      background: rgba(79,209,197,.12);
+      border:1px solid rgba(79,209,197,.25);
+      color: var(--text);
+      font-weight:800;
+      margin-right:10px;
+    }
+    .step h4{margin:0 0 6px; font-size:15px}
+    .step p{margin:0; color:var(--muted); font-size:14px}
+
+    .proof{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){.proof{grid-template-columns:1fr}}
+    .quote{
+      padding:18px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .quote p{margin:0 0 10px; color:var(--muted)}
+    .quote .who{display:flex; align-items:center; gap:10px; color:var(--text); font-weight:700}
+    .avatar{
+      width:34px; height:34px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    details{
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 12px 14px;
+    }
+    details summary{cursor:pointer; font-weight:700}
+    details p{color:var(--muted); margin:10px 0 0; font-size:14px}
+
+    .footer{
+      padding:28px 0 36px;
+      color: var(--muted);
+      font-size:13px;
+      border-top:1px solid var(--line);
+      margin-top:22px;
+    }
+    .footer .row{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .ok{color:var(--ok)}
+    .warn{color:var(--danger)}
+    .kpi{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:14px
+    }
+    .kpi .badge strong{color:var(--text)}
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="row">
+        <div class="brand" role="banner">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <div style="font-size:14px; opacity:.9;">FinAI</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:600;">финансовый AI помощник</div>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Навигация">
+          <a href="#value">Ценность</a>
+          <a href="#how">Как работает</a>
+          <a href="#features">Функции</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <button class="btn primary" onclick="scrollToLead()">Получить ранний доступ</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <span class="pill"><span class="dot"></span> MVP для проверки гипотезы • 2 минуты до результата</span>
+            <h1>Покажем, где «утекают» деньги — и дадим понятный план выхода в стабильность</h1>
+            <p class="lead">
+              Внесите доходы, кредиты, обязательные платежи и регулярные траты. AI посчитает
+              <b>реальную долговую нагрузку</b>, <b>индекс финансовой устойчивости</b> и
+              <b>подушку безопасности</b> (на сколько месяцев хватит накоплений при потере дохода).
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn primary" onclick="scrollToLead()">Хочу попробовать</button>
+              <button class="btn ghost" onclick="track('click_demo'); alert('Здесь можно вставить видео/скриншоты демо.');">
+                Посмотреть демо
+              </button>
+            </div>
+
+            <div class="trust">
+              <span>• Валюты: KZT / RUB / USD / EUR (база — KZT)</span>
+              <span>• Кредиты + рассрочки</span>
+              <span>• Депозиты: остаток + ставка → доход считается автоматически</span>
+            </div>
+
+            <div class="kpi">
+              <span class="badge"><strong>Гипотеза</strong>: людям нужен простой “диагноз” финансов</span>
+              <span class="badge"><strong>Цель</strong>: собрать лиды и сегменты</span>
+            </div>
+          </div>
+
+          <!-- Lead form -->
+          <aside class="card form-card" id="lead">
+            <div class="form-title">Ранний доступ + бесплатный разбор</div>
+            <p class="form-sub">Оставьте контакты — пришлём приглашение в тест и уточним ваш сценарий.</p>
+
+            <form id="leadForm">
+              <div class="grid2">
+                <div>
+                  <label for="name">Имя</label>
+                  <input id="name" name="name" placeholder="Оксана" autocomplete="name" required />
+                </div>
+                <div>
+                  <label for="contact">Телефон / Telegram / Email</label>
+                  <input id="contact" name="contact" placeholder="+7… / @username / email" required />
+                </div>
+              </div>
+
+              <div class="grid2">
+                <div>
+                  <label for="credits">Сколько кредитов сейчас?</label>
+                  <select id="credits" name="credits" required>
+                    <option value="" selected disabled>Выберите</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2–3</option>
+                    <option>4+</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="currency">Основная валюта</label>
+                  <select id="currency" name="currency" required>
+                    <option value="" selected disabled>Выберите</option>
+                    <option value="KZT">KZT</option>
+                    <option value="RUB">RUB</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                  </select>
+                </div>
+              </div>
+
+              <label for="goal">Что важнее всего сейчас?</label>
+              <select id="goal" name="goal" required>
+                <option value="" selected disabled>Выберите</option>
+                <option value="stability">Понять устойчивость бюджета</option>
+                <option value="debts">Снизить долговую нагрузку</option>
+                <option value="safety">Собрать подушку безопасности</option>
+                <option value="leaks">Найти лишние траты</option>
+                <option value="plan">Получить план действий на месяц</option>
+              </select>
+
+              <label for="note">Коротко про ситуацию (по желанию)</label>
+              <textarea id="note" name="note" placeholder="Например: 2 кредита, есть рассрочка, хочу понять, сколько безопасно тратить в месяц."></textarea>
+
+              <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+                <button class="btn primary" type="submit" style="flex:1;">Получить доступ</button>
+                <button class="btn" type="button" onclick="track('click_whatsapp'); alert('Вставьте здесь ссылку на WhatsApp/Telegram.');">
+                  Написать сейчас
+                </button>
+              </div>
+
+              <div class="tiny">
+                Нажимая «Получить доступ», вы соглашаетесь на обработку данных для связи по продукту.
+                <a href="#" onclick="track('open_privacy'); alert('Добавьте свою политику конфиденциальности.'); return false;">Политика</a>
+              </div>
+            </form>
+
+            <div id="formStatus" class="tiny" style="margin-top:10px;"></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALUE -->
+    <section id="value">
+      <div class="wrap">
+        <h2 class="section-title">Что вы получите за 2 минуты</h2>
+        <p class="section-sub">Без сложных таблиц. Только понятные метрики и действия.</p>
+
+        <div class="tiles">
+          <div class="tile">
+            <div class="icon">📉</div>
+            <h3>Реальная долговая нагрузка</h3>
+            <p>Покажем долю платежей по кредитам/рассрочкам от дохода и уровень риска.</p>
+          </div>
+
+          <div class="tile">
+            <div class="icon">🛡️</div>
+            <h3>Подушка безопасности</h3>
+            <p>На сколько месяцев хватит накоплений при потере дохода — и как быстро её нарастить.</p>
+          </div>
+
+          <div class="tile">
+            <div class="icon">🧭</div>
+            <h3>План выхода в стабильность</h3>
+            <p>Чёткие шаги: что оптимизировать, что закрывать первым, как удержать бюджет.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section id="how">
+      <div class="wrap">
+        <h2 class="section-title">Как это работает</h2>
+        <p class="section-sub">Для MVP мы проверяем главный сценарий: “ввёл данные → получил диагностику и план”.</p>
+
+        <div class="how">
+          <div class="step">
+            <div style="display:flex; align-items:center;">
+              <span class="n">1</span>
+              <h4>Вводите доходы и дату старта зарплаты</h4>
+            </div>
+            <p>Можно учитывать зарплату, подработки и доходы от депозитов (остаток + ставка).</p>
+          </div>
+
+          <div class="step">
+            <div style="display:flex; align-items:center;">
+              <span class="n">2</span>
+              <h4>Добавляете кредиты, рассрочки и обязательные платежи</h4>
+            </div>
+            <p>Покажем реальную нагрузку и влияние регулярных подписок/коммуналки/налогов.</p>
+          </div>
+
+          <div class="step">
+            <div style="display:flex; align-items:center;">
+              <span class="n">3</span>
+              <h4>Отмечаете регулярные траты</h4>
+            </div>
+            <p>Еженедельные покупки, транспорт, кафе — чтобы увидеть “утечки” бюджета.</p>
+          </div>
+
+          <div class="step">
+            <div style="display:flex; align-items:center;">
+              <span class="n">4</span>
+              <h4>Получаете метрики и рекомендации</h4>
+            </div>
+            <p>Индекс устойчивости, подушка, план на месяц и “что делать первым”.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+      <div class="wrap">
+        <h2 class="section-title">Функции, которые мы тестируем первыми</h2>
+        <p class="section-sub">Чтобы понять спрос — важны не “все фичи мира”, а одна, которая реально решает боль.</p>
+
+        <div class="tiles">
+          <div class="tile">
+            <div class="icon">💳</div>
+            <h3>Несколько карт и счетов</h3>
+            <p>Сводим всё в одну картину, в базовой валюте KZT (с поддержкой RUB/USD/EUR).</p>
+          </div>
+          <div class="tile">
+            <div class="icon">🏦</div>
+            <h3>Депозиты → доход считается сам</h3>
+            <p>Остаток + ставка → прогнозируем начисление, учитываем в общей модели.</p>
+          </div>
+          <div class="tile">
+            <div class="icon">🧾</div>
+            <h3>Кредиты и рассрочки</h3>
+            <p>Рассрочка без переплаты тоже учитывается как обязательство и влияет на риск.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOCIAL PROOF -->
+    <section>
+      <div class="wrap">
+        <div class="proof">
+          <div class="quote">
+            <h2 class="section-title" style="margin-bottom:10px;">Для кого это</h2>
+            <p>
+              Для работающих людей 25–40 лет, у которых есть 1–3 кредита/рассрочки и несколько регулярных платежей.
+              Когда появляется тревога перед концом месяца или новым кредитом — нужен быстрый ответ: “я в порядке или нет?”
+            </p>
+            <div class="kpi">
+              <span class="badge"><span class="ok">●</span> Простой язык</span>
+              <span class="badge"><span class="ok">●</span> Понятные проценты и сроки</span>
+              <span class="badge"><span class="warn">●</span> Без “стыда” и морали</span>
+            </div>
+          </div>
+          <div class="quote">
+            <p>«Я хочу увидеть честную картину: сколько реально могу тратить и что закрывать первым, чтобы выдохнуть.»</p>
+            <div class="who">
+              <div class="avatar" aria-hidden="true"></div>
+              <div>
+                Пользователь MVP<br><span style="color:var(--muted); font-weight:600; font-size:12px;">формат обратной связи</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="wrap">
+        <h2 class="section-title">FAQ</h2>
+        <p class="section-sub">Коротко о том, что обычно спрашивают перед тестом.</p>
+
+        <div style="display:grid; gap:10px;">
+          <details>
+            <summary>Это банк? Вы видите мои счета?</summary>
+            <p>Нет. На MVP вы вводите данные вручную. Мы используем их только для расчёта метрик и связи по тесту.</p>
+          </details>
+
+          <details>
+            <summary>Сколько времени занимает ввод?</summary>
+            <p>Обычно 2–7 минут: доход + обязательные платежи + кредиты/рассрочки + регулярные траты.</p>
+          </details>
+
+          <details>
+            <summary>Будет ли “умная” рекомендация или просто таблица?</summary>
+            <p>Цель — рекомендации. Метрики → вывод → список действий на месяц (что оптимизировать/погасить первым).</p>
+          </details>
+
+          <details>
+            <summary>Какая модель монетизации?</summary>
+            <p>Проверяем freemium: базовая диагностика бесплатно, расширенный план/сценарии и сопровождение — платно.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section>
+      <div class="wrap">
+        <div class="card" style="padding:18px;">
+          <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+            <div>
+              <div class="section-title" style="margin:0 0 6px;">Готовы проверить вашу финансовую устойчивость?</div>
+              <div class="section-sub" style="margin:0;">Оставьте контакт — пришлём доступ к MVP и уточним ваш сценарий.</div>
+            </div>
+            <button class="btn primary" onclick="scrollToLead()">Получить ранний доступ</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="wrap">
+        <div class="row">
+          <div>© <span id="year"></span> FinAI • MVP для проверки гипотезы</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="badge" href="#" onclick="track('open_terms'); alert('Добавьте условия использования.'); return false;">Условия</a>
+            <a class="badge" href="#" onclick="track('open_privacy_footer'); alert('Добавьте политику.'); return false;">Политика</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // --- Simple analytics stub ---
+    // Замените на GA4/Meta/Amplitude: тут только консоль + localStorage.
+    function track(event, props = {}) {
+      const payload = {
+        event,
+        props,
+        ts: new Date().toISOString(),
+        path: location.pathname + location.hash
+      };
+      console.log("[track]", payload);
+
+      const key = "finai_events";
+      const arr = JSON.parse(localStorage.getItem(key) || "[]");
+      arr.push(payload);
+      localStorage.setItem(key, JSON.stringify(arr));
+    }
+
+    function scrollToLead(){
+      track("click_cta_scroll");
+      document.getElementById("lead").scrollIntoView({behavior:"smooth", block:"start"});
+      document.getElementById("name").focus({preventScroll:true});
+    }
+
+    // prefill year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // --- Lead form handling ---
+    const form = document.getElementById("leadForm");
+    const statusEl = document.getElementById("formStatus");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = Object.fromEntries(new FormData(form).entries());
+      track("lead_submit", {
+        credits: data.credits,
+        currency: data.currency,
+        goal: data.goal,
+        has_note: !!(data.note && data.note.trim().length > 0)
+      });
+
+      // Вариант A: отправка в ваш backend/CRM (раскомментируйте и вставьте URL)
+      // await fetch("https://YOUR-ENDPOINT.com/leads", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(data)
+      // });
+
+      // Вариант B: пока просто имитация успеха (для теста)
+      statusEl.textContent = "Спасибо! Заявка принята. Мы свяжемся с вами для доступа к тесту.";
+      statusEl.style.color = "var(--ok)";
+
+      form.reset();
+
+      // Микро-конверсия: показать следующий шаг
+      setTimeout(() => {
+        alert("Готово! Следующий шаг: добавьте канал связи (Telegram/WhatsApp) и подключите аналитику (GA4/Meta).");
+      }, 250);
+    });
+
+    // Track scroll depth (грубая проверка вовлеченности)
+    let depth25=false, depth50=false, depth75=false;
+    window.addEventListener("scroll", () => {
+      const h = document.documentElement;
+      const sc = (h.scrollTop || document.body.scrollTop);
+      const max = (h.scrollHeight - h.clientHeight);
+      const p = max > 0 ? (sc / max) : 0;
+
+      if (!depth25 && p > 0.25) { depth25=true; track("scroll_25"); }
+      if (!depth50 && p > 0.50) { depth50=true; track("scroll_50"); }
+      if (!depth75 && p > 0.75) { depth75=true; track("scroll_75"); }
+    });
+  </script>
+</body>
+</html>
